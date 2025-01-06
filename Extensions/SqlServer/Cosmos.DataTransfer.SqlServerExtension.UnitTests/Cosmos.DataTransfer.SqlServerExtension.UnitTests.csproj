@@ -18,11 +18,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Json\Cosmos.DataTransfer.JsonExtension.UnitTests\Cosmos.DataTransfer.JsonExtension.UnitTests.csproj" />
     <ProjectReference Include="..\Cosmos.DataTransfer.SqlServerExtension\Cosmos.DataTransfer.SqlServerExtension.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Data\FlatFile.json">
+    <None Update="Data\SqlStatement.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
