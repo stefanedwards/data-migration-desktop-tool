@@ -14,6 +14,12 @@ public static class ValidationExtensions
         }
 
         var context = new ValidationContext(settings, serviceProvider: null, items: null);
+        if (Attribute.GetCustomAttributes(typeof(T), typeof(ClassValidatorAttribute),
+            inherit: true).Any()) {
+            
+
+        }
+
         var results = new List<ValidationResult>();
         Validator.TryValidateObject(settings, context, results, true);
         foreach (var validationResult in results)
