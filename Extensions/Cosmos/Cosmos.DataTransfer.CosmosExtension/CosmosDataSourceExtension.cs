@@ -41,10 +41,14 @@ namespace Cosmos.DataTransfer.CosmosExtension
 
             logger.LogInformation("Reading from {Database}.{Container}", settings.Database, settings.Container);
             using FeedIterator<Dictionary<string, object?>> feedIterator = GetFeedIterator<Dictionary<string, object?>>(settings, container, requestOptions);
+            double requestCharge = 0;
             while (feedIterator.HasMoreResults)
             {
-                foreach (var item in await feedIterator.ReadNextAsync(cancellationToken))
+                var feed = await feedIterator.ReadNextAsync(cancellationToken);
+                requestCharge += feed.RequestCharge;
+                foreach (var item in feed)
                 {
+                    
                     if (!settings.IncludeMetadataFields)
                     {
                         var corePropertiesOnly = new Dictionary<string, object?>(item.Where(kvp => !kvp.Key.StartsWith("_")));
@@ -56,6 +60,7 @@ namespace Cosmos.DataTransfer.CosmosExtension
                     }
                 }
             }
+            logger.LogInformation("Request charge for query on {Database}.{Container}: {RU}", settings.Database, settings.Container, requestCharge);
         }
 
         private static FeedIterator<T> GetFeedIterator<T>(CosmosSourceSettings settings, Container container, QueryRequestOptions requestOptions)
