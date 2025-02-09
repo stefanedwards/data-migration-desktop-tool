@@ -51,7 +51,12 @@ namespace Cosmos.DataTransfer.JsonExtension.UnitTests
                 { "Indented", "true" },
             });
 
-            await output.WriteAsync(input.ReadAsync(sourceConfig, NullLogger.Instance), sinkConfig, input, NullLogger.Instance);
+            var readInput = await input.ReadAsync(sourceConfig, NullLogger.Instance).ToListAsync();
+            CollectionAssert.AreEqual(new int[] { 1, 2, 3, 4},
+                readInput.Select(x => (int)x.GetValue("id")!).ToArray());
+
+            await output.WriteAsync(readInput.ToAsyncEnumerable(), sinkConfig, input, NullLogger.Instance);
+            Console.WriteLine( await File.ReadAllTextAsync(fileOut));
 
             bool areEqual = JToken.DeepEquals(JToken.Parse(await File.ReadAllTextAsync(fileCompare)), JToken.Parse(await File.ReadAllTextAsync(fileOut)));
             Assert.IsTrue(areEqual);
